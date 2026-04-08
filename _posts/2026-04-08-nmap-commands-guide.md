@@ -1,6 +1,6 @@
 ---
 title: "Nmap Commands Guide — Essential Scanning Techniques"
-date: 2026-04-08 00:00:00 +0000
+date: 2026-10-17 00:00:00 +0000
 categories: [Cybersecurity, Networking]
 tags: [nmap, reconnaissance, port-scanning, pentesting]
 ---
@@ -13,7 +13,6 @@ Nmap is one of the most powerful tools in a cybersecurity professional's arsenal
 
 Used to scan a target's ports directly, skipping host discovery. Nmap will not check whether the host is "up" — it assumes it is and proceeds straight to port scanning.
 ![](assets/nmap_prjct_media/nmap_image1.png)
-
 > Useful when a target blocks ICMP pings, making it appear offline even when it's not.
 
 ---
@@ -21,13 +20,14 @@ Used to scan a target's ports directly, skipping host discovery. Nmap will not c
 ## `nmap --sC`
 
 Launches a set of default NSE (Nmap Scripting Engine) scripts against the target. This gathers information such as service details, host info, and known vulnerabilities.
+![](assets/nmap_prjct_media/nmap_image2.png)
 
 ---
 
 ## `nmap -T2 --sS`
 
 Performs a **SYN scan** (also called a stealth or half-open scan). Nmap sends SYN packets to the target without completing the TCP handshake, allowing it to determine whether a port is open without establishing a full connection.
-
+![](assets/nmap_prjct_media/nmap_image3.png)
 The `-T[2-5]` flag controls the timing/speed of the scan:
 - Higher numbers = faster and more aggressive
 - Higher numbers also = greater risk of detection by IDS/IPS
@@ -55,6 +55,7 @@ A powerful combination for scanning multiple targets at once:
 ## `nmap -v -A scanme.nmap.org`
 
 Performs an **aggressive scan** with high verbosity:
+![](assets/nmap_prjct_media/nmap_image4.png)
 
 - `-v` (verbose) — prints more information during the scan in real time
 - `-A` enables multiple features at once:
@@ -67,9 +68,10 @@ Performs an **aggressive scan** with high verbosity:
 
 ---
 
-## `nmap -sS -p 1-65535 -T4 192.168.19.148`
+## `nmap -sS -p 1-65535 -T4 <IPv4>`
 
 A **full TCP SYN scan** covering all 65535 ports on a specific host:
+![](assets/nmap_prjct_media/nmap_image5.png)
 
 - `-sS` — stealth SYN scan (faster and less likely to be logged than a full connect scan)
 - `-p 1-65535` — scans every TCP port
@@ -82,6 +84,7 @@ A **full TCP SYN scan** covering all 65535 ports on a specific host:
 ## `nmap -sU -p 53,67,123 10.0.0.0/24`
 
 Performs a **UDP scan** across an entire subnet, targeting specific ports:
+![](assets/nmap_prjct_media/nmap_image6.png)
 
 - `-sU` — scans UDP ports instead of TCP
 - `-p 53,67,123` — targets DNS (53), DHCP (67), and NTP (123) ports
@@ -94,6 +97,7 @@ Performs a **UDP scan** across an entire subnet, targeting specific ports:
 ## `nmap -sV --version-intensity 2 -p 22,80,443 example.com`
 
 Identifies the exact **versions of services** running on common ports:
+![](assets/nmap_prjct_media/nmap_image7.png)
 
 - `-sV` — enables service version detection
 - `--version-intensity 2` — reduces probe intensity (faster, slightly less accurate)
@@ -103,9 +107,10 @@ Identifies the exact **versions of services** running on common ports:
 
 ---
 
-## `nmap -O --osscan-guess 192.168.67.130`
+## `nmap -O --osscan-guess <IPv4>`
 
 Attempts to **detect the operating system** of the target machine:
+![](assets/nmap_prjct_media/nmap_image8.png)
 
 - `-O` — enables OS detection by analyzing network responses
 - `--osscan-guess` — allows Nmap to make more aggressive guesses when no perfect match is found
@@ -117,6 +122,7 @@ Attempts to **detect the operating system** of the target machine:
 ## `nmap -sS -D RND:10 -p 22 est.uit.ac.ma`
 
 Performs a **SYN scan on port 22 (SSH)** while using **decoys** to hide the real source of the scan:
+![](assets/nmap_prjct_media/nmap_image9.png)
 
 - `-sS` — stealth SYN scan
 - `-D RND:10` — generates 10 random decoy IP addresses to obscure the real scanner's identity
@@ -127,9 +133,10 @@ Performs a **SYN scan on port 22 (SSH)** while using **decoys** to hide the real
 
 ---
 
-## `nmap --script http-enum -p 80,8080 192.168.64.129`
+## `nmap --script http-enum -p 80,8080 <IPv4>`
 
 Enumerates **common web directories and files** on HTTP services:
+![](assets/nmap_prjct_media/nmap_image10.png)
 
 - `--script http-enum` — runs the NSE script that searches for directories and files used by popular web applications and servers
 - `-p 80,8080` — targets standard HTTP ports
@@ -141,6 +148,7 @@ Enumerates **common web directories and files** on HTTP services:
 ## `nmap -6 -p 80,443 -A fe80::38d9:75c8:f31a:fa2b%eth0`
 
 Performs an **aggressive scan over IPv6** on HTTP/HTTPS ports:
+![](assets/nmap_prjct_media/nmap_image11.png)
 
 - `-6` — forces IPv6 scanning
 - `-p 80,443` — targets HTTP and HTTPS
@@ -154,6 +162,7 @@ Performs an **aggressive scan over IPv6** on HTTP/HTTPS ports:
 ## `nmap --traceroute -sT -p 80 est.uit.ac.ma`
 
 Performs a **TCP connect scan on port 80** and traces the network path to the target:
+![](assets/nmap_prjct_media/nmap_image12.png)
 
 - `--traceroute` — displays each network hop between the scanner and the target
 - `-sT` — TCP connect scan (completes the full handshake; useful without root privileges)
@@ -163,9 +172,10 @@ Performs a **TCP connect scan on port 80** and traces the network path to the ta
 
 ---
 
-## `nmap -sS -p 1-1024 --open --reason --packet-trace 192.168.64.129`
+## `nmap -sS -p 1-1024 --open --reason --packet-trace <IPv4>`
 
 A detailed **diagnostic SYN scan** of the first 1024 ports:
+![](assets/nmap_prjct_media/nmap_image13.png)
 
 - `-sS` — stealth SYN scan
 - `-p 1-1024` — scans well-known ports
