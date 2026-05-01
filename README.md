@@ -9,7 +9,7 @@ A minimal, ready-to-use template for creating a blog with the [**Chirpy**][chirp
 
 When installing Chirpy through [RubyGems.org][gem], Jekyll can only read a subset of theme files (`_data`, `_layouts`, `_includes`, `_sass`, `assets`) and limited `_config.yml` options from the gem. As a result, users cannot enjoy the full out-of-the-box experience that Chirpy offers.
 
-To unlock all features, the following files must be present in your Jekyll site:
+To unlock all features, the following files must be present in your Jekyll site: 
 
 ```shell
 .
