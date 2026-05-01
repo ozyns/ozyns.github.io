@@ -11,7 +11,7 @@ tags: [wifi, fluxion, evil-twin, kali-linux, wpa]
 
 ## What is Fluxion?
 
-Fluxion is a wireless security auditing tool used in penetration testing. Instead of brute-forcing a Wi-Fi password, it takes a smarter approach — it uses **social engineering** to trick the victim into handing over the password themselves.
+Fluxion is a wireless security auditing tool used in penetration testing. Instead of brute-forcing a Wi-Fi password, it takes a smarter approach, it uses **social engineering** to trick the victim into handing over the password themselves.
 
 It supports two attack types that work together:
 
@@ -35,7 +35,7 @@ ls
 
 The `-i` flag tells Fluxion to check and install its dependencies automatically. When you run it, you'll be greeted by Fluxion's ASCII logo while it scans for missing packages.
 
-![Fluxion install screen](_images/fluxion-install.png)
+![](assets/Evil-Twin-prjct-media/im1.png)
 
 If any dependencies are flagged as **missing**, install them manually before moving on. In this demo, everything was already present so we went straight to the attack.
 
@@ -47,7 +47,7 @@ After the install check, Fluxion presents you with the attack menu. Since we nee
 
 Next, Fluxion asks which wireless interface to use. Our external adapter shows up as **wlan0**, so we select that. Fluxion automatically puts the interface into **monitor mode** — you'll see this confirmed in the terminal.
 
-![Interface selection](_images/interface-select.png)
+![](assets/Evil-Twin-prjct-media/im2.png)
 
 ---
 
@@ -55,7 +55,7 @@ Next, Fluxion asks which wireless interface to use. Our external adapter shows u
 
 Now we tell Fluxion to scan all available SSIDs on the **2.4 GHz** band. A new `xterm` window opens and starts listing every Wi-Fi network in range.
 
-![SSID scan window](_images/ssid-scan.png)
+![](assets/Evil-Twin-prjct-media/im3.png)
 
 Let the scan run for a bit until your target network appears in the list. Once you see it, press **Ctrl+C** to stop the scan and return to the main terminal.
 
@@ -84,11 +84,11 @@ We go with **mdk4**.
 
 ## Step 5 — Running the Handshake Snooper
 
-Configuration done — the attack starts. A log viewer window opens showing real-time events.
+Configuration done - the attack starts. A log viewer window opens showing real-time events.
 
 Fluxion begins sending **deauthentication packets** via mdk4, kicking every client off the target network. When they try to reconnect, their device and the router perform the 4-way handshake — and Fluxion captures it.
 
-![Handshake capture log](_images/handshake-captured.png)
+![](assets/Evil-Twin-prjct-media/im4.png)
 
 Once the log shows a **valid hash captured**, the hard part is done. Close the log viewer window. Fluxion will ask if you want to select another attack — and that's exactly what we'll do next.
 
@@ -96,7 +96,7 @@ Once the log shows a **valid hash captured**, the hard part is done. Close the l
 
 ## Step 6 — Setting Up the Captive Portal (Evil Twin)
 
-Now we select **Captive Portal** from the menu. Since we just ran Handshake Snooper, Fluxion recognizes the previous target and asks if we want to reuse it — we confirm yes.
+Now we select **Captive Portal** from the menu. Since we just ran Handshake Snooper, Fluxion recognizes the previous target and asks if we want to reuse it, we confirm yes.
 
 Here's what each setting does:
 
@@ -135,11 +135,11 @@ Everything is configured. Fluxion launches the attack and several `xterm` window
 
 From the victim's device, two networks appear with the **exact same name** — one is the real AP, the other is ours. Since we're not using the emulated mode, our rogue network shows "No Internet Access," but users often still try it thinking it's a temporary issue with their router.
 
-![Victim Wi-Fi view](_images/victim-wifi-view.png)
+![](assets/Evil-Twin-prjct-media/im5.png)
 
 When the victim connects to the rogue network, their browser automatically opens a **captive portal page** — styled to look like a router login page — asking for the Wi-Fi password.
 
-![Captive portal page](_images/captive-portal.png)
+![](assets/Evil-Twin-prjct-media/im6.png)
 
 If the victim enters the wrong password, the page simply reloads and asks again. Under the hood, each attempt is hashed and compared against the handshake we captured in Step 5. The moment the hash matches — the password is correct.
 
@@ -158,7 +158,6 @@ As soon as the correct password is entered, Fluxion:
 /root/fluxion/attacks/Captive Portal/netlog/
 ```
 
-![Password captured](_images/password-captured.png)
 
 ---
 
@@ -170,7 +169,7 @@ The Evil Twin attack is a powerful example of why **social engineering** is ofte
 
 - **Don't auto-connect** to known SSIDs in public places.
 - **Use a VPN** on any network you don't fully control.
-- Be suspicious of any captive portal asking for your **Wi-Fi password** — legitimate routers almost never do this.
+- Be suspicious of any captive portal asking for your **Wi-Fi password**, legitimate routers almost never do this.
 - **WPA3** and **802.11w** (management frame protection) make this class of attack significantly harder.
 - Network admins should monitor for **duplicate SSIDs** and unusual signal anomalies on their infrastructure.
 
