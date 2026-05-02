@@ -4,15 +4,9 @@ date: 2025-05-02 00:00:00 +0000
 categories: [Machine Learning, Finance]
 tags: [python, random-forest, forex, time-series, sklearn, yfinance]
 math: true
-image:
-  path: /assets/img/evaluation_report.png
-  alt: Model evaluation report — actual vs predicted EUR/USD rate
 ---
 
-> **TL;DR** — I built a supervised ML pipeline to forecast the EUR/USD exchange
-> rate using 10 years of historical data, engineered 30+ features (returns,
-> volatility, RSI, lag windows), and trained a Random Forest Regressor that
-> achieves **R² ≈ 0.95** on the held-out test set.
+> **TL;DR** — Raw price data alone isn't useful. We engineered 36 features (returns, volatility, RSI, lag windows), used a proper time-based split to avoid leakage, and trained a Random Forest reaching R² = 0.95 and 74.76% directional accuracy. Built by a team of three, each handling a key part: data, modeling, and evaluation.
 
 ---
 
@@ -261,7 +255,7 @@ bias — the last 20% of dates form the test set.
 
 ## Evaluation Charts
 
-![Evaluation report — 4-panel figure](/assets/img/posts/eurusd/evaluation_report.png)
+![Evaluation report — 4-panel figure](/assets/img/evaluation_report.png)
 _From top-left: actual vs predicted time series · scatter with R² · error
 distribution · top-12 feature importances_
 
