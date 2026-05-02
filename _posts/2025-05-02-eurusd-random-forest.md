@@ -5,7 +5,7 @@ categories: [Machine Learning, Finance]
 tags: [python, random-forest, forex, time-series, sklearn, yfinance]
 math: true
 image:
-  path: /assets/img/posts/eurusd/evaluation_report.png
+  path: /assets/img/evaluation_report.png
   alt: Model evaluation report — actual vs predicted EUR/USD rate
 ---
 
@@ -119,12 +119,75 @@ bias — the last 20% of dates form the test set.
 
 ## Results
 
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+
 <div id="chart-container" style="position:relative; height:320px; margin:2rem 0;">
   <canvas id="predChart"></canvas>
-  <p id="chart-loading" style="text-align:center; color:#888; padding-top:4rem;">
-    Loading chart…
-  </p>
+  <p id="chart-loading" style="text-align:center; color:#888; padding-top:4rem;">Loading chart…</p>
 </div>
+
+<script>
+(async () => {
+  try {
+    const res  = await fetch('/assets/data/eurusd/predictions.json');
+    const data = await res.json();
+    document.getElementById('chart-loading').style.display = 'none';
+    const ctx = document.getElementById('predChart').getContext('2d');
+    new Chart(ctx, {
+      type: 'line',
+      data: {
+        labels: data.dates,
+        datasets: [
+          {
+            label: 'Actual',
+            data: data.actual,
+            borderColor: '#58a6ff',
+            backgroundColor: 'transparent',
+            borderWidth: 2,
+            pointRadius: 0,
+            tension: 0.3,
+          },
+          {
+            label: 'Predicted',
+            data: data.predicted,
+            borderColor: '#f78166',
+            backgroundColor: 'transparent',
+            borderWidth: 2,
+            pointRadius: 0,
+            tension: 0.3,
+            borderDash: [4, 3],
+          },
+        ],
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        interaction: { mode: 'index', intersect: false },
+        plugins: {
+          legend: { labels: { color: '#c9d1d9' } },
+          tooltip: {
+            callbacks: {
+              label: ctx => `${ctx.dataset.label}: ${ctx.parsed.y.toFixed(5)}`,
+            },
+          },
+        },
+        scales: {
+          x: {
+            ticks: { color: '#8b949e', maxTicksLimit: 8, maxRotation: 30 },
+            grid: { color: 'rgba(48,54,61,0.6)' },
+          },
+          y: {
+            ticks: { color: '#8b949e' },
+            grid: { color: 'rgba(48,54,61,0.6)' },
+          },
+        },
+      },
+    });
+  } catch(e) {
+    document.getElementById('chart-loading').textContent = 'Chart failed to load.';
+  }
+})();
+</script>
 
 <div id="feature-chart-container" style="position:relative; height:340px; margin:2rem 0;">
   <canvas id="featureChart"></canvas>
@@ -134,8 +197,7 @@ bias — the last 20% of dates form the test set.
 (async () => {
   const res  = await fetch('/assets/data/eurusd/feature_importance.json');
   const data = await res.json();
-
-  const ctx = document.getElementById('featureChart').getContext('2d');
+  const ctx  = document.getElementById('featureChart').getContext('2d');
   new Chart(ctx, {
     type: 'bar',
     data: {
@@ -152,9 +214,7 @@ bias — the last 20% of dates form the test set.
       indexAxis: 'y',
       responsive: true,
       maintainAspectRatio: false,
-      plugins: {
-        legend: { display: false }
-      },
+      plugins: { legend: { display: false } },
       scales: {
         x: { ticks: { color: '#8b949e' }, grid: { color: 'rgba(48,54,61,0.6)' } },
         y: { ticks: { color: '#c9d1d9', font: { size: 11 } }, grid: { color: 'rgba(48,54,61,0.6)' } }
@@ -225,34 +285,6 @@ contribute meaningful lift on top.
 - **This is not a trading signal** — high R² on price levels is expected
   because prices are autocorrelated. Directional accuracy is the more honest
   measure of predictive skill.
-
----
-
-## Reproducing the Results
-
-```bash
-# clone & install
-git clone https://github.com/ozyns/<repo-name>
-cd <repo-name>
-pip install -r requirements.txt
-
-# train + export all blog assets in one command
-python export_results.py
-# → outputs saved to ./blog_assets/
-
-# copy assets to your blog
-cp blog_assets/*.png  ~/ozyns.github.io/assets/img/posts/eurusd/
-cp blog_assets/*.json ~/ozyns.github.io/assets/data/eurusd/
-```
-
----
-
-## What's Next
-
-- [ ] Compare with **Gradient Boosting** (XGBoost / LightGBM)
-- [ ] Add macro features: interest rate spread, VIX index
-- [ ] Walk-forward cross-validation for more honest evaluation
-- [ ] LSTM baseline for comparison
 
 ---
 
