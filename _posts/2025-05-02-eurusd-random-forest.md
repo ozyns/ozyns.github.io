@@ -282,4 +282,4 @@ contribute meaningful lift on top.
 
 ---
 
-*Source code: [github.com/ozyns/\<repo\>](https://github.com/ozyns/EUR-USD-Forecasting-with-Random-Forest.git)*
+*Source code: [github.com/ozyns/EUR-USD-Forecasting-with-Random-Forest](https://github.com/ozyns/EUR-USD-Forecasting-with-Random-Forest)*
