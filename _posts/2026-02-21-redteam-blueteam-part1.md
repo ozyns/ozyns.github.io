@@ -13,8 +13,8 @@ tags: [homelab, pfsense, active-directory, tailscale, vmware, kali-linux, networ
 
 This is **Part 1 of a 4-part series** documenting a full Red Team vs Blue Team exercise built from scratch.
 
-| Part | Topic | Status |
-|------|-------|--------|
+| Part | Topic |
+|------|-------|
 | **Part 1 — You are here** | Building the lab. network design, firewall, Active Directory, DMZ |
 | Part 2 | Vulnerability Assessment — Nmap scanning, 12 findings |
 | Part 3 | Exploitation & Pivoting — AD compromise, DMZ breach, lateral movement |
@@ -168,13 +168,13 @@ This one port forward, FTP traffic on the WAN redirected to the DMZ host  become
 
 #### 2.3.2 Windows XP Target Machine
 
-The primary internal target is a **Windows XP SP3** virtual machine at `192.168.1.5`. We chose XP specifically because it carries well-known unpatched vulnerabilities — most notably **MS08-067**, which we exploit in Part 3 during the pivoting phase.
+The primary internal target is a **Windows XP SP3** virtual machine at `192.168.1.5`. We chose XP specifically because it carries well-known unpatched vulnerabilities most notably **MS08-067**, which we exploit in Part 3 during the pivoting phase.
 
 > **What is MS08-067?** A critical remote code execution vulnerability in Windows XP's Server service. Exploiting it gives an attacker a SYSTEM-level shell without needing any credentials. It's the same vulnerability used by the Conficker worm in 2008.
 
 #### 2.3.3 Internal Kali Linux — Insider Threat
 
-A second Kali Linux machine sits directly on the LAN at `192.168.1.15`, representing a **compromised workstation or malicious insider** — someone who already has internal access.
+A second Kali Linux machine sits directly on the LAN at `192.168.1.15`, representing a **compromised workstation or malicious insider**, someone who already has internal access.
 
 > **Why simulate an insider threat?** Firewalls protect against attacks coming from outside. But an insider is already inside — they can scan, attack, and pivot without ever touching the perimeter firewall. This is one of the most dangerous and underestimated threat vectors in real organizations.
 
@@ -196,7 +196,7 @@ A second Kali Linux machine sits directly on the LAN at `192.168.1.15`, represen
 | External Kali #1 | 100.102.x.x |
 | External Kali #2 | 100.102.x.x |
 
-pfSense joined the Tailscale network and got a new interface (`tailscale0`, configured as OPT5). Firewall rules allowed Tailscale traffic to reach the DMZ and LAN — giving our remote Kali machines a tunnel into the lab.
+pfSense joined the Tailscale network and got a new interface (`tailscale0`, configured as OPT5). Firewall rules allowed Tailscale traffic to reach the DMZ and LAN giving our remote Kali machines a tunnel into the lab.
 
 **Why this matters for security:** This illustrates why VPN entry points need to be monitored just as carefully as public-facing services. An attacker who compromises a VPN-connected machine effectively bypasses the perimeter firewall entirely. In Part 4, we configure Snort specifically on the Tailscale interface because of this.
 
@@ -206,7 +206,7 @@ pfSense joined the Tailscale network and got a new interface (`tailscale0`, conf
 
 To simulate a realistic enterprise environment, we added a full **Active Directory** domain. This is what enables the most sophisticated attacks in Part 3 — ZeroLogon, LDAP Anonymous Binding, AS-REP Roasting.
 
-> **What is Active Directory?** Microsoft's directory service used in virtually every corporate Windows environment. It manages users, computers, groups, and policies across an organization. A **Domain Controller (DC)** is the server that runs AD — it's the most critical server in any Windows network. If an attacker controls the DC, they control everything.
+> **What is Active Directory?** Microsoft's directory service used in virtually every corporate Windows environment. It manages users, computers, groups, and policies across an organization. A **Domain Controller (DC)** is the server that runs AD, it's the most critical server in any Windows network. If an attacker controls the DC, they control everything.
 
 #### 2.5.1 Network Design
 
@@ -220,27 +220,27 @@ The AD lab runs on its own isolated subnet (`192.168.2.0/24`) connected to pfSen
 
 The setup followed these steps:
 
-**Step 1 — Install Windows Server 2022**
+**Step 1 : Install Windows Server 2022**
 Installed from a Microsoft evaluation ISO onto a VM with static IP `192.168.2.10`.
 
-**Step 2 — Install Active Directory Domain Services**
+**Step 2 : Install Active Directory Domain Services**
 Added via Server Manager → Add Roles and Features → Active Directory Domain Services + DNS Server.
 
-**Step 3 — Create a New Forest**
+**Step 3 : Create a New Forest**
 Promoted the server to Domain Controller and created a new forest with root domain **`ad.lab`**.
 
 > **Why `ad.lab` and not `.local`?** The `.local` suffix can interfere with mDNS traffic on local networks. Using `.lab` avoids this. Also avoid real TLDs like `.com` or `.org` for lab domains, they could accidentally resolve to real internet addresses.
 
-**Step 4 — Configure DNS Forwarders**
+**Step 4 : Configure DNS Forwarders**
 Pointed at a public DNS server so the DC can resolve both internal and external names.
 
-**Step 5 — Set Up DHCP Server**
+**Step 5 : Set Up DHCP Server**
 Configured to lease addresses in the range `192.168.2.100–192.168.2.200` to domain-joined clients.
 
-**Step 6 — Create Domain User Accounts**
+**Step 6 : Create Domain User Accounts**
 Two standard domain user accounts created for testing: `IT_User01` and `IT_User02`. One is deliberately configured with weak settings that enable attacks in Part 3.
 
-**Step 7 — Join a Windows 10 Client**
+**Step 7 : Join a Windows 10 Client**
 A Windows 10 Enterprise VM was joined to the `ad.lab` domain, making it a realistic domain-joined workstation.
 
 ---
