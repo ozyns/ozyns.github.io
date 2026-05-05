@@ -1,6 +1,6 @@
 ---
 title: "Red Team vs Blue Team — Part 1: Building the Lab"
-date: 2025-02-21 00:00:00 +0000
+date: 2026-02-21 00:00:00 +0000
 categories: [Cybersecurity, Penetration Testing]
 tags: [homelab, pfsense, active-directory, tailscale, vmware, kali-linux, network-segmentation]
 ---
@@ -229,7 +229,7 @@ Added via Server Manager → Add Roles and Features → Active Directory Domain 
 **Step 3 — Create a New Forest**
 Promoted the server to Domain Controller and created a new forest with root domain **`ad.lab`**.
 
-> **Why `ad.lab` and not `.local`?** The `.local` suffix can interfere with mDNS traffic on local networks. Using `.lab` avoids this. Also avoid real TLDs like `.com` or `.org` for lab domains — they could accidentally resolve to real internet addresses.
+> **Why `ad.lab` and not `.local`?** The `.local` suffix can interfere with mDNS traffic on local networks. Using `.lab` avoids this. Also avoid real TLDs like `.com` or `.org` for lab domains, they could accidentally resolve to real internet addresses.
 
 **Step 4 — Configure DNS Forwarders**
 Pointed at a public DNS server so the DC can resolve both internal and external names.
@@ -249,16 +249,16 @@ A Windows 10 Enterprise VM was joined to the `ad.lab` domain, making it a realis
 
 The final piece is **Metasploitable 2**, placed in the DMZ subnet (`192.168.3.0/24`) at IP `192.168.3.16`.
 
-> **What is a DMZ in practice?** Think of a bank — the lobby is accessible to the public, but the vault requires extra credentials. The DMZ is the lobby: exposed enough to serve external users, isolated from the real sensitive assets inside.
+> **What is a DMZ in practice?** Think of a bank, the lobby is accessible to the public, but the vault requires extra credentials. The DMZ is the lobby: exposed enough to serve external users, isolated from the real sensitive assets inside.
 
-Metasploitable serves as our "lobby server" — intentionally vulnerable, exposed to the outside via a port-forwarded FTP service, and the launching point for the pivoting attack in Part 3.
+Metasploitable serves as our "lobby server" intentionally vulnerable, exposed to the outside via a port-forwarded FTP service, and the launching point for the pivoting attack in Part 3.
 
 **pfSense rules for the DMZ:**
 
 - **Inbound:** Only FTP traffic (via WAN port forward) reaches Metasploitable
-- **Outbound:** DMZ hosts can freely reach the LAN — this is the **deliberate misconfiguration** that makes pivoting possible
+- **Outbound:** DMZ hosts can freely reach the LAN, this is the **deliberate misconfiguration** that makes pivoting possible
 
-This single misconfiguration — allowing outbound DMZ traffic to reach the LAN — is what turns a "contained" compromise into a full internal network takeover. We exploit it in detail in Part 3.
+This single misconfiguration allowing outbound DMZ traffic to reach the LAN, is what turns a "contained" compromise into a full internal network takeover. We exploit it in detail in Part 3.
 
 ---
 
@@ -277,8 +277,8 @@ This single misconfiguration — allowing outbound DMZ traffic to reach the LAN 
     { name: "Windows XP SP3", os: "Windows XP", role: "Internal attack target", ip: "192.168.1.5" },
     { name: "Metasploitable 2", os: "Ubuntu (vulnerable)", role: "DMZ target / pivot point", ip: "192.168.3.16" },
     { name: "Internal Kali", os: "Kali Linux", role: "Insider threat simulation", ip: "192.168.1.15" },
-    { name: "External Kali #1", os: "Kali Linux", role: "External attacker", ip: "100.102.36.10 (Tailscale)" },
-    { name: "External Kali #2", os: "Kali Linux", role: "External attacker", ip: "100.102.36.11 (Tailscale)" }
+    { name: "External Kali #1", os: "Kali Linux", role: "External attacker", ip: "100.102.x.x (Tailscale)" },
+    { name: "External Kali #2", os: "Kali Linux", role: "External attacker", ip: "100.102.x.x (Tailscale)" }
   ];
 
   let html = '<table style="width:100%; border-collapse:collapse; font-size:13px;">';
